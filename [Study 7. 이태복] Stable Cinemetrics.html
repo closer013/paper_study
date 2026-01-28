@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>stable_cinemetrics.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="stable-cinemetrics">Stable Cinemetrics</h1>
+<ul>
+<li>Title: Stable Cinemetrics : Structured Taxonomy and Evaluation for Professional Video Generation</li>
+<li>Authors: Agneet Chatterjee, Rahim Entezari, Maksym Zhuravinskyi, Maksim Lapin, Reshinth Adithyan, Amit Raj, Chitta Baral, Yezhou Yang, Varun Jampani</li>
+<li>Published: NeurIPS 2025</li>
+<li>Paper: https://arxiv.org/abs/2509.26555</li>
+<li>Github:</li>
+<li>Hompage: https://stable-cinemetrics.github.io/</li>
+</ul>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<blockquote>
+<p>최근 비디오 생성 기술의 발전으로 사용자 프롬프트로부터 고품질의 비디오 합성이 가능해졌다. 그러나 기존의 모델과 벤치마크는 **전문 영상 제작이 요구하는 복잡성과 요구 조건을 충분히 포착하지 못한다. 이러한 문제를 해결하기 위해, 본 논문에서는 영화 제작 제어 요소를 독립적이고 계층적인 Taxonomy로 정식화한 **Stable Cinemetrics(SCINE)**을 제안한다.</p>
+</blockquote>
+<blockquote>
+<p>SCINE은 <strong>Setup, Event, Lighting, Camera</strong>의 네 가지 축으로 구성된 택소노미를 정의하며, 이는 실제 산업 관행에 기반한 <strong>76개의 세분화된 제어 노드</strong>로 이루어져 있다. 이 택소노미를 활용하여, <strong>1) 전문적 사용 사례에 부합하는 프롬프트 벤치마크를 구축</strong>하고, <strong>2) 프롬프트 분류 및 질문 생성을 자동화하는 파이프라인을 개발함</strong>으로써 각 제어 차원을 <strong>독립적으로 평가</strong>할 수 있도록 한다.</p>
+</blockquote>
+<blockquote>
+<p>또한, 10개 이상의 모델이 생성한 2만 개 이상의 비디오에 대해 <strong>80명 이상의 영화 전문가가 참여한 대규모 인간 평가 실험을 수행</strong>하였다. 거시적 및 미시적 분석 결과, 현재 가장 성능이 우수한 모델조차도 <strong>특히 Events 및 Camera 관련 제어에서 상당한 격차를 보임을 확인</strong>하였다. 확장 가능한 평가를 위해, 전문가 주석과 정렬된 <strong>비전-언어 모델 기반 자동 평가기를 학습하였으며, 이는 기존의 제로샷 기준선보다 우수한 성능을 보인다.</strong></p>
+</blockquote>
+<blockquote>
+<p>SCINE은 전문 영상 생성 문제를 비디오 생성 모델 연구의 맥락 안에 최초로 명확히 위치시키는 접근법으로, 영화적 제어를 중심으로 한 택소노미와 구조화된 평가 파이프라인, 그리고 향후 연구를 안내하기 위한 정밀한 분석을 함께 제시한다.</p>
+</blockquote>
+<hr>
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="problem-statements">Problem statements</h3>
+<ul>
+<li>비디오 생성 모델 기술은 전문 영상 제작 분야에 혁신을 가져올 것이다.</li>
+<li>생성 비전 기술은 미디어 제작에 있어 막대한 잠재력을 지니고 있지만, 여전히 근본적인 질문이 남아 있다.</li>
+<li>생성 비디오를 단순하고 탐색적인 합성 수준에서 벗어나, <strong>전문적인 수준의 제어 가능한 영화적 결과물을 지원하는 매체로 어떻게 전환할 수 있는가</strong></li>
+<li><strong>캐주얼한 생성 비디오와 전문적인 생성 비디오의 핵심적인 차이는 영화적 제어(cinematic control)의 결정적인 격차가 있다</strong>
+<blockquote>
+<p>오늘날의 모델들은 “말을 타는 우주비행사”와 같은 장면을 생성할 수는 있지만, 전문적인 제작에서는 샷의 프레이밍, 키 라이트의 위치, 심지어 우주비행사가 말이 달리기 전이나 후에 미소를 짓는지와 같은 세부적인 영화적 요소에 대한 정밀한 제어가 요구된다. 진정한 전문 비디오 생성 시스템이라면, 이러한 모든 영화적 선택을 다시 창작자의 손에 돌려주어야 한다.</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="in-this-paper">In this paper..</h3>
+<ul>
+<li>필수적인 영화적 제어 요소에 대한 명확한 정의, 비디오 생성 모델 결과에 대한 표준화된 평가 프로토콜을 정의한다.</li>
+<li><strong>“현재의 비디오 생성 모델은 전문적인 용도로 사용될 준비가 되었는가?”라는 질문에 직접적으로 답할 수 있도록 한다.</strong></li>
+<li>SCINE의 핵심 목표는 생성 비전과 전문 영상 제작의 교차 영역에서, **제어(control)**와 **구체성(specificity)**의 원칙에 기반한 택소노미를 구축</li>
+<li>SCINE에서 구축한 모든 원칙들은 영화 제작에서 매우 중요하며, 모든 선택은 영화적 의미를 지닌다.
+<blockquote>
+<p>예를 들어, 로우 앵글(low angle)은 권력을 전달하고, 로우 키 조명(low-key lighting)은 극적인 분위기를 유발한다.</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="images/fig1.png" alt="Figure 1"></p>
+<p><strong>Figure 1.</strong><br>
+그림 1은 실제 샷 제작 워크플로우를 반영한 SCINE 파이프라인을 보여주며, 이는 각본 작성 단계에서 시작해 화면상의 비주얼로 이어지는 과정을 따른다.
+각 프롬프트는 SCINE 택소노미로부터 제어 요소들을 샘플링하여 구성되며, 이를 통해 다양한 전문적 사용 사례를 포괄하도록 설계된다.
+프롬프트에 명시된 모든 제어 요소는 자동으로 다시 택소노미에 분류되며, 이를 기반으로 각 제어 차원에 대한 표적화된 평가 질문을 생성할 수 있다.</p>
+<ul>
+<li>이와 같은 구조화된 정식화는 영화적 제어 요소에 대해 독립적이며 세분화된 평가를 가능하게 하여, 단순한 전체 영상 품질 판단을 넘어 생성 모델의 구체적인 강점과 약점을 진단할 수 있도록 한다.</li>
+<li>Setup, Camera, Lighting, Events를 분리하여 평가함으로써, SCINE은 거시적인 비교뿐만 아니라 개별 제어 속성 수준의 정밀한 분석을 지원한다.</li>
+<li>SCINE은 확장성을 고려하여 설계되었다.
+<ul>
+<li>전문 영상 품질을 평가하는 데 있어 전문가 인간 평가는 여전히 가장 신뢰할 수 있는 기준이지만, 비용이 높고 확장이 어렵다는 한계가 있다.</li>
+<li>이러한 제약을 해결하기 위해, 본 연구에서는 전문가 주석과 정렬된 비전-언어 모델을 학습하여 자동 평가를 수행하는 방법을 추가로 탐구한다.</li>
+<li>이는 인간 판단과의 높은 상관성을 유지하면서도 확장 가능한 대안을 제공한다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-proposed-methods">3. Proposed Methods</h2>
+<h3 id="31-taxonomy-design">3.1. Taxonomy Design</h3>
+<p><img src="images/fig2.png" alt="Figure 2"></p>
+<ul>
+<li>실제 영화 제작 관행에 기반한 구조화된 영화적 제어 택소노미를 먼저 정의</li>
+<li>우리의 택소노미는 업계 전문가들과의 반복적인 협업을 통해 개발되었으며, 여기에는 빅 파이브 스튜디오들이 설립한 조직들, 독립 촬영감독과 각본가들, 그리고 아카데미상을 수상한 시각효과(VFX) 아티스트가 포함된다.</li>
+<li>택소노미 개발 과정에서 중심이 된 안내 질문은 다음과 같았다.<strong>“전문가들은 한 샷(shot)을 구성할 때 어떤 제어들을 필요로 하는가?”</strong></li>
+<li>우리는 영화적 제어를 구성하는 네 가지 주요 축으로 <strong>Setup, Camera, Lighting, Events</strong>를 정의한다.
+<ul>
+<li>전문 영상 제작에 필요한 요소들을 포괄하도록 설계</li>
+<li>동시에 서로 상호 분리되어 있음 -&gt; 특정 차원에서의 실패를 다른 차원과 독립적으로 분석할 수 있도록 한다.</li>
+<li>각 축은 더 세분화된 계층으로 분리된다.</li>
+</ul>
+</li>
+<li>중요한 점은, 단순한 기술적 분류 체계가 아니라 평가를 위한 기능적 기반으로 설계</li>
+<li>각 제어 노드는, 모델이 해당 영화적 의도를 성공적으로 구현했는지를 평가하는 구체적인 질문 하나 이상으로 대응될 수 있도록 구성</li>
+<li>SCINE은 각 축과 하위 노드들을 통해서 현재 모델들이 어떤 지점에서, 왜 전문적 기준에 미치지 못하는지에 대한 통찰을 제공한다.</li>
+</ul>
+<h4 id="shots">Shots</h4>
+<ul>
+<li>샷(shot)은 영화 제작의 원자적 단위로, 컷 없이 이어지는 연속된 시퀀스이며 여러 영화적 선택들이 조율됨으로써 영화적 의미가 형성된다.</li>
+<li>장편 영화에서의 평균 샷 길이(ASL)는 5–10초로 알려져 있으며, 이는 현재 비디오 생성 모델들의 시간적 한계와 밀접하게 부합한다.</li>
+<li>이러한 길이는 제약이 아니라, 충분히 풍부한 서사적·시각적 복잡성이 전개될 수 있는 압축된 캔버스에 해당한다.</li>
+<li>하나의 샷에는 의도, 감정, 이야기를 전달하기 위해 수많은 제어 요소들이 포함된다.</li>
+<li>이러한 이유로 우리는 세밀한 제어가 핵심이 되는 샷 단위에서 택소노미를 설계하기로 결정하였다.</li>
+<li>제어(control)는 캐주얼한 비디오 생성과 전문 비디오 생성의 핵심적인 구분점이다.</li>
+<li>캐주얼한 환경에서는 사용자가 최소한의 개입만으로 모델의 출력을 수용하며, 주요 창의적 결정을 모델에 위임하는 경우가 많다.</li>
+<li>반면, 전문적 사용에서는 생성 과정의 모든 단계에서 정밀하고 의도적인 제어가 요구된다.</li>
+<li>실제로 영화 제작에서는 픽셀 단위 제어가 일반적으로 사용되며, 이는 원하는 시각적 효과를 달성하는 데 있어 세밀한 조정의 중요성을 강조한다.</li>
+<li>촬영감독이나 감독과 같은 전문가는 주로 하나의 샷이 지니는 창의적 의도를 정의하는 역할을 맡는다.</li>
+<li>영화 제작은 협업 과정이지만, 이러한 역할 구분은 제어를 모델링하기 위한 실용적인 추상화를 제공한다.</li>
+<li>중요한 통찰은, 역할 간 일부 중첩이 존재함에도 불구하고, 이들이 서로 다른 제어 차원을 뒷받침할 만큼 충분히 분리되어 있다는 점이다.
+<blockquote>
+<p>예를 들어, 각본가는 조명이나 카메라 움직임을 거의 명시하지 않으며, 미술감독은 일반적으로 감정의 톤이나 서사적 페이싱과 연관되지 않는다.</p>
+</blockquote>
+</li>
+<li>이러한 요인들은 샷의 구성을 이루는 네 가지 제어 축을 개발하게 된 동기가 되었으며, 각 축은 샷의 구성에 기여한다.</li>
+<li>우리의 택소노미는 계층적 트리 구조로 설계되었으며, 리프 노드는 가장 세분화된 제어 파라미터에 해당하고 각각은 값들의 집합과 연관된다.</li>
+</ul>
+<h4 id="setup">Setup</h4>
+<ul>
+<li>Setup은 프레임 안에 보이는 모든 시각적 요소를 포괄한다. 우리는 이를 세 가지 상위 그룹으로 구성한다.
+<ul>
+<li>(1) Scene은 환경적 제어 요소들을 묶는 범주로, Texture, Geometry, Set Design을 포함한다.
+<ul>
+<li>Texture는 대비나 색상 팔레트와 같은 요소를 다루며, 이는 샷의 표면적 느낌을 좌우한다.</li>
+<li>Geometry는 장면 내에서 지배적인 형태와 요소들의 공간적 배치를 포착한다.</li>
+<li>Set Design은 소품(Props)과 그 속성들, 세트의 거시적 맥락을 형성하는 Backdrop, 그리고 샷의 “느낌”에 기여하는 미시적 요소들을 정의하는 Environment로 구성된다.</li>
+</ul>
+</li>
+<li>(2) Subjects는 샷 내에서 중심이 되는 인물들을 의미하며, 의상이나 액세서리와 같은 속성으로 정의된다.</li>
+<li>(3) Text Generation은 제목이나 문자와 같이 화면에 표시되는 타이포그래피를 의미하며, 이는 통합된 그래픽 요소로 나타나도록 설계된다.</li>
+</ul>
+</li>
+<li>Setup의 각 노드는 영화적 의미를 지닌다.
+<blockquote>
+<p>예를 들어, 새벽(Time of Day) 설정에 안개(Elements)가 결합되면 위험을 암시할 수 있으며, 정돈된(Organization) 대칭형 복도(Balance)는 질서를 전달한다.</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="lighting">Lighting</h4>
+<ul>
+<li><em>“조명은 아마추어 영상물을 전문적인 이야기와 표현으로 바꾸는 핵심이다”</em> 의 원칙에 근거하여 다음과 같은 그룹으로 세분화한다.
+<ul>
+<li>(1) Source: 샷 내에서 빛이 발생하는 근원</li>
+<li>(2) Color Temperature: 빛의 따뜻함을 조절하는 색온도</li>
+<li>(3) Lighting Conditions: 장면 전체의 조명을 설명하는 사전 설정 구성</li>
+<li>(4) Effects: 빛이 장면과 상호작용하면서 발생하는 시각적 결과</li>
+<li>(5) Position: 광원이 피사체와 맺는 공간적 관계</li>
+<li>(6) Advanced Controls: 깜빡임 변조나 조명 색조를 조절하기 위한 컬러 젤 사용과 같은 고급 제어를 포함한다.</li>
+</ul>
+</li>
+<li>각 제어 요소는 고유한 영화적 표현과 대응된다.
+<blockquote>
+<p>예를 들어, 백라이트만 사용하는 샷(Position)은 신비감을 불러일으키며, 강한 그림자는 긴장감을 증폭시키는 데 자주 활용된다.</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="camera">Camera</h4>
+<ul>
+<li>카메라 택소노미는 하나의 샷에 포함되는 모든 카메라 관련 제어 차원을 포괄한다. 우리는 이를 네 가지 상위 그룹으로 구성한다.
+<ul>
+<li>(1) Intrinsics: 카메라가 포착하는 빛을 규정하는 광학 및 노출 파라미터</li>
+<li>(2) Extrinsics: 피사체에 대한 카메라의 위치와 방향</li>
+<li>(3) Trajectory: 카메라의 움직임과 이를 가능하게 하는 보조 장비</li>
+<li>(4) Creative Intent: 샷의 서사적 혹은 감정적 톤을 형성하는 구성적 선택</li>
+</ul>
+</li>
+<li>기존 연구들은 주로 카메라 움직임 제어에 초점을 맞추어 왔으나, 우리는 샷을 설정하는 과정에서 훨씬 더 광범위한 카메라 파라미터들이 독립적으로 조작될 수 있음을 보인다.</li>
+<li>각 파라미터는 구체적인 영화적 영향을 지닌다.
+<blockquote>
+<p>예를 들어, 얕은 심도는 피사체를 배경으로부터 분리하여 감정적 초점을 유도할 수 있으며, 인서트 프레이밍은 서사적 디테일을 정밀하게 강조한다.</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="events">Events</h4>
+<ul>
+<li>Events는 샷의 서사적 실체, 즉 묘사되는 행동, 감정, 대사를 인코딩하며, 이는 세밀한 제어를 위해 종속 노드들로 다시 분해된다.</li>
+<li>이러한 종속 노드들은 상위 범주 없이 독립적으로 존재할 수 없는 속성들을 나타내며, 예를 들어 상호작용의 유형이나 대사의 전달 방식을 지정할 수 있다.</li>
+<li>감정은 눈에 보이는 눈물과 같이 명시적으로 나타날 수도 있고, 이를 악문 턱과 같이 암묵적으로 드러날 수도 있으며, 행동은 단독으로 발생할 수도 있고 상호작용적일 수도 있다.
+<ul>
+<li>Portrayed As 범주는 사건이 전개되는 양상을 나타내는 Temporal(예: 웃음이 동시에 터지는 경우 vs 순차적으로 발생하는 경우), 그리고 사건이 전경에서 발생하는지 배경에서 발생하는지를 나타내는 Contextual과 같은 요소들을 포착한다.</li>
+<li>Advanced Controls는 전환점이나 클라이맥스와 같은 샷의 페이싱과 이야기 구조를 정교화한다.
+최근 연구들이 순차적 이벤트 생성 관점에서 T2V 모델을 평가해 왔지만, 우리는 전문적 관점에서 Events가 훨씬 더 넓고 풍부한 평가 공간을 포괄함을 보여준다.</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-designing-prompts-for-professional-use">3.2 Designing Prompts for Professional Use</h3>
+<ul>
+<li>택소노미는 전문적 사용을 위해 설계된 프롬프트를 구성하는 기반을 이룬다.</li>
+<li>프롬프트를 생성하는 우리의 핵심 접근 방식은 제어 노드들로부터 값들을 샘플링하고, 현실적인 영화적 의도를 반영하는 프롬프트를 생성하는 것이다.</li>
+<li>영화 제작 과정을 모사하여, 우리는 먼저 서사적 스크립트를 생성한 뒤 여기에 시각적 요소들을 주입한다.</li>
+</ul>
+<p><img src="images/fig3.png" alt="Figure 3"></p>
+<h4 id="scine-scripts">SCINE-Scripts</h4>
+<ul>
+<li>SCINE-Scripts라 불리는 이 프롬프트들은 개별 샷의 서사적 내용을 담는다.</li>
+<li>우리는 전문 각본가와 협업하여, 단일 샷으로 구성되고, 10초 미만이며, 화면 밖 요소에 의존하지 않는다는 엄격한 제약을 만족하는 시드 프롬프트를 생성한다.</li>
+<li>이러한 시드 프롬프트와 Events 택소노미에서 샘플링된 노드 구성은 프롬프트 생성을 위해 LLM의 입력으로 제공된다.</li>
+<li>기존 연구들에서 각본 생성에 있어 LLM의 효과성이 입증되었기 때문에 이를 활용한다.</li>
+<li>SCINE-Scripts 임베딩에 대한 t-SNE 시각화는 실제 각본 데이터와 상당한 중첩을 보이는 반면, VBench-2.0 및 MovieGenBench 의 프롬프트들은 거의 중첩을 보이지 않는다.</li>
+<li>프롬프트의 다양성을 보장하기 위해, 우리는 여러 차례의 LLM 호출에 걸쳐 파라미터를 변화시키며, Plutchik의 감정 모델로부터 감정을 샘플링하고, 행동, 대화 구조, 장르, 그리고 주체를 번갈아 가며 변화시킨다.</li>
+</ul>
+<p><img src="images/fig4.png" alt="Figure 4"></p>
+<h4 id="scine-visuals">SCINE-Visuals</h4>
+<ul>
+<li>SCINE-Visuals 프롬프르트들은 Camera, Lighting, Setup 택소노미의 시각적 요소들을 SCINE-Scripts에 추가하여 확장한 것이다.</li>
+<li>Events와 달리, 이들 택소노미는 샷의 시각적 스타일과 구성을 세밀하게 제어할 수 있도록 한다.</li>
+<li>각 SCINE-Scripts의 기본 프롬프트에 대해, 하나 이상의 제어 노드에서 값들을 샘플링하여 구조화된 시각적 명세를 프롬프트에 주입함으로써 이를 확장한다.</li>
+<li>SCINE-Visuals는 우리의 택소노미가 지니는 핵심적인 장점을 보여주는데, 바로 구조화된 프롬프트 업샘플링이다.</li>
+<li>기존의 프롬프트 업샘플링 기법들이 모든 창의적 결정을 LLM에 위임하는 것과 달리, 우리의 방법은 택소노미 내에서 생성을 제한함으로써 보다 통제 가능하고 해석 가능한 프롬프트 확장을 가능하게 한다.</li>
+<li>Table 1은 SCINE-Scripts가 택소노미를 통해 어떻게 업샘플링되어 SCINE-Visuals가 생성되는지를 정리하여 보여준다.</li>
+</ul>
+<h3 id="33-category-and-question-generation">3.3 Category and Question Generation</h3>
+<ul>
+<li>각 프롬프트에 대해 Category (범주) 를 추출하고 질문을 생성한다.</li>
+<li>Category는 프롬프트를 다시 택소노미와 연결해 주며, 이를 통해 서로 다른 추상화 수준에 걸친 세밀한 평가를 가능하게 한다.</li>
+<li>하나의 프롬프트는 서로 다른 택소노미에 걸쳐 여러 category에 매핑될 수 있다.</li>
+<li>각 category 대해, 비디오 평가 과정에서 인간 평가자에게 제시되는 표적화된 질문을 생성한다.
+<ul>
+<li>이러한 질문들은 구체적인 성격을 가지며, 단 하나의 제어 노드만을 대상으로 하여 해당 제어 요소를 독립적으로 평가할 수 있도록 한다.</li>
+<li>세밀한 귀속이 불가능한 고수준 프롬프트 충실도 질문과 달리, 본 프레임워크는 **제어 요소별 주석(per-control annotation)**을 지원한다.</li>
+</ul>
+</li>
+<li>최소 예시
+<ul>
+<li>프롬프트: 타이트한 클로즈업 샷이 벽난로에 초점을 맞추고 있으며, 그 속의 불씨가 밝게 깜빡이고 있다.
+<ul>
+<li>category: Lighting → Advanced Controls → Motion | 질문: 장면의 조명에서 설명과 일치하는 동적인 깜빡임 효과가 나타나는가?</li>
+<li>category: Camera → Creative Intent → Shot Size | 질문: 세밀한 프레이밍을 포착하는 타이트한 클로즈업 샷이 비디오에 포함되어 있는가?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/fig5.png" alt="Figure 5">
+<strong>Figure 5.</strong></p>
+<ol>
+<li>프롬프트 생성 파이프라인: SCINE Scripts는 시드 프롬프트와 Events 택소노미에서 샘플링된 노드들을 LLM에 입력함으로써 생성되며, 이는 본 벤치마크의 서사적 구성 요소를 이룬다. 이후 SCINE Visuals는 구조화된 업샘플링을 통해 생성되는데, Camera, Lighting, Setup 택소노미에서 노드들을 샘플링하여 각 SCINE Script에 주입함으로써 시각적 설명을 포착하는 프롬프트를 구성한다.</li>
+<li>자동 categorizaing (범주화) 및 질문 생성: 주어진 SCINE 프롬프트와 택소노미를 기반으로, 프롬프트에 포함된 각 택소노미 요소를 범주화하고, 각 제어 노드를 독립적으로 평가할 수 있도록 이에 대응하는 질문을 생성한다.</li>
+</ol>
+<h2 id="4-are-current-video-generative-models-ready-for-professional-use">4. Are Current Video Generative Models Ready for Professional Use?</h2>
+<h3 id="41-experimental-setup">4.1 Experimental Setup</h3>
+<p><img src="images/fig6.png" alt="Figure 6"></p>
+<h4 id="prompt">Prompt:</h4>
+<ul>
+<li>SCINE 벤치마크는 Scripts와 Visuals라는 두 가지 프롬프트 범주로 구성되며, 각각은 서로 다른 전문적 역할에 대응한다(표 2).</li>
+<li>Visuals 프롬프트는 택소노미를 활용해 Scripts를 체계적으로 업샘플링함으로써 생성되며, 그 결과 총 2,089개의 프롬프트가 구성된다.</li>
+<li>프롬프트는 난이도에 따라 구분되는데, 기본 프롬프트는 샘플링되는 제어 노드 수를 제한하여 생성하고, 고급 프롬프트에서는 이러한 제한을 두지 않는다.</li>
+</ul>
+<h4 id="models">Models:</h4>
+<ul>
+<li>오픈소스 모델 (WAN 1B/14B, HunyuanVideo, Step Video, CogVideoX 5B, LTX-Video, Pyramid Flow, Easy Animate 5.1, Mochi, VChitect-2.0)</li>
+<li>클로즈드소스 모델(Minimax, Luma Ray 2, Pika 2.2)</li>
+<li>총 13개의 최신 T2V 모델을 평가한다.</li>
+<li>본 평가의 목적은 각 모델이 각본가 관점에서의 서사 충실도 평가와 같은 역할별 전문 과업에 얼마나 적합한지를 분석하는 데 있다.</li>
+<li>별도의 언급이 없는 한, 공정한 비교를 위해 모든 모델에 대해 기본 샘플링 파라미터를 사용하고, 프롬프트별로 동일한 시드를 유지한다.</li>
+</ul>
+<h4 id="human-annotation-setup">Human Annotation Setup</h4>
+<ul>
+<li>우리는 촬영감독, 영화 편집자, 각본가, 시각 커뮤니케이션 디자이너, 감독 등 다양한 역할을 포함하여 평균 6.5년의 영화 제작 경력을 지닌 84명의 전문가 평가자 풀과 협업하였다.</li>
+<li>평가자들은 하나의 프롬프트와 함께 두 개의 생성된 비디오 샘플을 제시받았다.</li>
+<li>각 프롬프트에 대해, 택소노미로부터 도출된 평가 범주와 이에 대응하는 질문들이 제공되었다.</li>
+<li>각 비디오는 독립적으로 1–5점 척도로 평가되었으며, 1은 해당 범주와의 완전한 불일치를, 5는 완벽한 일치를 의미한다.</li>
+<li>평가 자체는 비교 방식이 아니었지만, 실험 결과 두 비디오를 나란히 제시하는 방식이 특히 중간 점수대를 선택할 때 평가자 보정에 도움이 되는 것으로 나타났다.</li>
+<li>일관성을 높이고 주관성을 줄이기 위해, 택소노미의 각 제어 노드를 포괄하는 종합적인 주석 가이드를 개발하였다.</li>
+<li>총 13,457개의 고유한 질문에 대해 각 비디오–질문 쌍마다 3개의 투표를 수집하여, 전체적으로 248,536건의 쌍별 주석 데이터를 확보하였다.</li>
+<li>1–5점 평가에 대해 모델 쌍 수준에서는 80.4%의 클래스 내 상관 계수(ICC)를, 모델을 개별적으로 고려할 경우에는 95.5%의 ICC를 관찰하였다.</li>
+<li>또한 45개의 모델 쌍에 대해 Wilcoxon 부호순위 검정을 수행한 결과, 그중 37쌍에서 통계적으로 유의미한 선호가 관측되었으며, 이는 평가자들이 모델 선호에 대해 일관된 합의를 보이고 있음을 보여준다.</li>
+</ul>
+<h3 id="42-results-and-analysis">4.2 Results and Analysis</h3>
+<p><img src="images/fig7.png" alt="Figure 7">
+<img src="images/fig8.png" alt="Figure 8"></p>
+<h4 id="scine-scripts">SCINE Scripts</h4>
+<ul>
+<li>서사적 이벤트 생성 능력에 대해 모델들을 평가한다.</li>
+<li>그림 6a는 생성된 이벤트의 정확성과 일관성에 초점을 맞추어, 서로 다른 장르 전반에서의 모델 성능을 비교한다.</li>
+<li>Minimax와 WAN-14B가 전반적으로 가장 우수한 성능을 보이는 반면, LTX-Video는 일관되게 낮은 성능을 보인다.</li>
+<li>모델들은 대체로 Biography 장르에서는 더 나은 성능을 보이지만, Comedy 장르는 어려운 과제로 나타난다.</li>
+<li>그림 7에서는 Events → Types 내의 세부 하위 범주를 자세히 살펴본다.</li>
+<li>Minimax는 대부분의 범주에서 선두를 차지하며, 특히 Dialogues와 Change in Environment에서 가장 큰 격차를 보이지만, Advanced Controls에서는 WAN-14B가 더 나은 성능을 보인다.</li>
+<li>또한 모델들은 상호작용적 행동보다 단독 행동을 더 잘 처리하며, 명시적 감정보다 암묵적 감정을 더 잘 표현한다.</li>
+<li>Event Types 중에서는 Actions가 모델 간 분산이 가장 낮다.</li>
+<li>그림 8은 13개 모델과 6가지 Temporal 방식에 따른 Actions의 Events 성능을 보여준다.</li>
+<li>모델들은 인과적, 중첩적, 순환적 사건에서는 어려움을 겪는다. 인과적 사건과 순차적 사건에 대한 성능은 모델 전반에서 높은 상관관계(ρ = 0.94)를 보이며, 동시 발생 사건과 중첩 사건 간에도 높은 상관관계(ρ = 0.86)가 관찰된다. 모델 간 성능 차이가 존재함에도 불구하고, 모든 모델이 여러 Event 측면에서 한계를 보이며 개선의 여지가 있음을 시사한다.</li>
+</ul>
+<h4 id="scine-visuals">SCINE Visuals</h4>
+<ul>
+<li>그림 6b는 SCINE Visuals에 대한 전반적인 결과를 보여준다.</li>
+<li>WAN-14B와 Minimax가 모든 제어 축에서 최상위 성능을 보인다.</li>
+<li>현재 모델들은 Events와 Camera에서 가장 큰 어려움을 겪는 반면, Setup과 Lighting 요소들은 상대적으로 더 잘 포착된다.</li>
+<li>상위 세 모델인 WAN-14B, WAN-1B, Minimax만이 Events를 안정적으로 표현하며, 나머지 모델들과는 상당한 성능 격차가 존재한다.</li>
+<li>Camera 점수는 전반적으로 낮지만, 모델 간 분포 폭이 좁아 모든 모델이 유사한 한계를 공유하고 있음을 시사한다.</li>
+<li>Lighting은 가장 일관된 성능을 보이며 대부분의 모델이 비교적 높은 점수를 기록한 반면, Setup은 최상위 모델들에서 가장 높은 절대 점수를 기록한다.</li>
+</ul>
+<p><img src="images/fig9.png" alt="Figure 9">
+<img src="images/fig10.png" alt="Figure 10"></p>
+<h4 id="%EC%B4%AC%EC%98%81%EA%B0%90%EB%8F%85cinematographer">촬영감독(Cinematographer)</h4>
+<ul>
+<li>Camera와 Lighting 택소노미의 제어 노드를 주입한 프롬프트를 생성하여 평가한다.</li>
+<li>Camera 영역에서는 Extrinsics와 Trajectory가 평균 성능이 가장 낮고, 모델 간 분산도 가장 작다.</li>
+<li>Lighting에서는 Lighting Position이 주요 병목으로 나타난다.</li>
+<li>그림 9에서는 프롬프트 난이도에 따라 분리된 결과를 제시한다.</li>
+<li>모든 모델에서 고급 프롬프트에 대해 성능 저하가 관찰되며, 이는 촬영감독이 많은 제어 권한을 가지는 전문적 워크플로우 조건 하에서 현재 모델들이 어려움을 겪고 있음을 의미한다.</li>
+<li>가장 큰 성능 하락은 Lighting Source, Color Temperature, Creative Intent에서 발생한다.</li>
+<li>Lighting Position과 Advanced Controls는 성능 하락 폭은 가장 작지만, 전반적으로 여전히 가장 취약한 범주로 남아 있어 프롬프트 복잡도와 무관한 지속적인 한계를 드러낸다.</li>
+<li>Hunyuan과 WAN-1B는 복잡도 수준 전반에서 비교적 일관된 성능을 보인다.</li>
+<li>또한 우리는 값 수준에서의 성능도 분석한다. Lighting Source(그림 10)에서는 Sunlight, Strobes, Firelight가 비교적 안정적으로 처리되는 반면, HMI, Fluorescent, Tungsten 조명은 낮은 성능을 보인다.</li>
+<li>그림 11에서 보이듯, Aerial 및 Knee-level 카메라 앵글은 더 잘 표현되는 반면, Dutch 및 Shoulder-level 앵글은 성능이 낮다.</li>
+<li>Shot Size(그림 12)에서는 Full 및 Extreme Close-Up 샷에 비해 Medium-Wide 및 Master 샷이 더 우수한 성능을 보인다.</li>
+</ul>
+<h5 id="%EB%AF%B8%EC%88%A0%EA%B0%90%EB%8F%85production-designer">미술감독(Production Designer).</h5>
+<ul>
+<li>모델들은 Setup 제어 축에서 가장 강한 성능을 보인다. Setup 내에서는 Subject와 Scene 생성에서 유사한 성능을 보이지만, Text Generation에서는 성능 저하가 나타난다.</li>
+<li>Subjects(그림 13a)에서는 모델 성능 편차가 크며, Hair와 Accessories에서 가장 높은 점수를, Personality와 Make-up에서 가장 낮은 점수를 기록한다.</li>
+<li>Set Design(그림 13b)에서는 Backdrop &gt; Props &gt; Environment 순으로 성능이 나타난다.</li>
+<li>Props 내에서는 Material 생성은 비교적 잘 수행되지만, 복잡한 Patterns 생성에는 어려움을 보인다.</li>
+<li>Environment에서는 일관된 Style과 Backgrounds를 유지하는 데 한계가 있는 반면, 프레임 내 Space를 구성하는 능력에서는 상대적으로 더 나은 성능이 관찰된다.</li>
+</ul>
+<h4 id="%EA%B0%90%EB%8F%85director">감독(Director).</h4>
+<p><img src="images/fig11.png" alt="Figure 11"></p>
+<ul>
+<li>이 역할을 대상으로 한 프롬프트는 모든 택소노미를 동시에 평가한다는 점에서 이전 범주들과 다르다.</li>
+<li>모든 제어가 동시에 정의될 경우, 모델의 평균 성능은 감소한다(그림 14).</li>
+<li>가장 큰 성능 하락은 Camera에서 나타나며, 그 다음으로 Setup과 Lighting이 뒤를 잇는다.</li>
+<li>WAN-14B는 단독 평가 결과와 비교했을 때, Director 프롬프트에서 Lighting과 Setup 모두에서 성능 향상을 보인 유일한 모델이다.</li>
+<li>본 평가를 통해 우리는 현재 T2V 모델들을 세 단계로 구분할 수 있음을 확인한다.
+<ul>
+<li>최상위에는 Minimax와 WAN-14B가 위치하며, 그 다음 단계에는 Luma Ray 2, Hunyuan, WAN-1B가 포함되고, 나머지 모델들은 세 번째 그룹을 형성한다.</li>
+<li>전반적인 성능 차이가 존재함에도 불구하고, 대부분의 모델들은 전문 비디오 생성에 핵심적인 세밀한 요소들에서 어려움을 겪는다.</li>
+</ul>
+<blockquote>
+<p>예를 들어, 원자적 사건은 비교적 잘 처리되지만, 더 깊은 시간적 추론을 요구하는 동시적·인과적 사건에서는 성능이 크게 저하된다. 마찬가지로, 조명 조건과 같은 고수준 단서는 비교적 잘 포착되지만, 정확한 광원 위치와 같은 미묘한 요소들은 잘 구현되지 않는다.</p>
+</blockquote>
+</li>
+<li>요약하면, 최상위 성능을 보이는 모델들조차도 본 택소노미의 모든 차원에 걸쳐 상당한 개선 여지를 보인다.</li>
+<li>어떤 모델도 샷 구성의 모든 측면에서 일관되게 강한 성능을 달성하지 못하며, 이는 생성 비디오 모델을 전문적 기준에 정렬시키는 것이 여전히 어려운 과제임을 보여준다.</li>
+</ul>
+<h2 id="5-scalable-evaluation-of-professional-videos">5. Scalable Evaluation of Professional Videos</h2>
+<p><img src="images/fig12.png" alt="Figure 12"></p>
+<h3 id="zero-shot-vlm-evaluations">Zero-shot VLM Evaluations.</h3>
+<ul>
+<li>비디오, 해당 프롬프트, 그리고 택소노미 노드에 연결된 특정 질문을 함께 제시하여 사용자 연구와 유사한 1–5점 평가를 요청함으로써 VLM과 인간 판단 간의 정렬 정도를 측정한다.</li>
+<li>평가 시 지정된 범주와 무관한 요소는 무시하도록 VLM에 명시적으로 지시한다.</li>
+<li>VLM의 선호는 각 비디오를 독립적으로 점수화한 뒤 더 높은 점수를 받은 비디오를 선택하는 방식으로 결정한다.</li>
+<li>우리는 강력한 비디오 이해 능력을 이유로 Qwen2.5-VL-Instruct 모델을 사용한다. 모델 규모의 영향을 분석하기 위해 7B, 32B, 72B의 세 가지 크기를 평가하였다.</li>
+<li>그림 15는 모델 규모를 키워도 인간 판단과의 정렬이 유의미하게 개선되지 않음을 보여준다.</li>
+<li>이러한 결과는 분포 내 인간 주석 데이터로의 파인튜닝 필요성을 강조한 기존 연구들과 일관되게, 전반적으로 낮은 정합도를 드러낸다.</li>
+</ul>
+<h3 id="aligning-human-and-vlm-ratings">Aligning Human and VLM ratings.</h3>
+<ul>
+<li>Qwen-2.5-VL-7B를 파인튜닝을 위한 기반 모델로 사용하며, 학습 및 검증 데이터셋은 각각 44,062개와 12,763개의 샘플로 구성된다.</li>
+<li>평가자 점수(비디오 쌍당 3개)는 동률을 제외하고 이진 선호로 집계된다.</li>
+<li>비디오는 원본 해상도에서 초당 2프레임으로 전처리된다.</li>
+<li>각 샘플은 하나의 프롬프트, 두 개의 비디오, 그리고 이진 레이블로 구성된다.</li>
+<li>학습된 모델은 분류기로 동작하며, 최종 레이어의 마지막 토큰에 linear projection을 적용하여 스칼라 점수를 출력하도록 아키텍처를 수정하였다.</li>
+<li>모델 입력은 하나의 비디오, 해당 프롬프트, 그리고 평가 질문으로 구성된다.</li>
+<li>학습에는 회귀 방식 대비 샘플 효율성이 높은 Bradley–Terry 목적 함수 를 사용한다.</li>
+<li>제로샷 평가와 마찬가지로, 평가자 평균을 기준으로 한 쌍별 선호 정확도를 목표 지표로 사용한다.</li>
+<li>파인튜닝된 모델은 전체 정확도 72.36%를 달성하여 모든 제로샷 VLM 기준선을 상회한다. 이는 기본 7B 모델 대비 약 20%의 절대적 성능 향상에 해당한다.</li>
+<li>본 모델은 서로 다른 생성 모델이 만든 비디오들 전반에서 일관된 성능을 보여주며, 다양한 비디오 품질에 대한 일반화 능력을 입증한다(그림 15).</li>
+</ul>
+<h2 id="bradley%E2%80%93terry-objective">Bradley–Terry Objective?</h2>
+<ul>
+<li>GOTO: https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model</li>
+<li>두 대상 중 어느 쪽이 더 낫다는 ‘쌍대 선호(pairwise preference)’ 데이터만을 사용해, 각 대상의 잠재적인 품질 점수를 학습하는 확률적 목적 함수</li>
+<li>In this paper, “이 비디오가 저 비디오보다 더 전문가 기준에 맞다” 라는 전문가 판단을 학습하기 위해 사용됩니다.</li>
+<li>개인적 추측입니다. 하하
+<ul>
+<li>평가 데이터:
+<ul>
+<li>하나의 프롬프트</li>
+<li>두 개의 생성 비디오</li>
+<li>전문가 3명의 평가 (1–5점)</li>
+</ul>
+</li>
+<li>문제:
+<ul>
+<li>같은 영상이라도 점수는 사람마다 다를 수 있음 3점 주는 사람 4점 주는 사람</li>
+<li>이런 경우 regression, classification은 불안정</li>
+<li>하지만 두 개의 비디오를 두고 어떤 비디오가 더 잘했다, 못했다는 사람마다 어느정도 유사한 결론이 나옴</li>
+</ul>
+</li>
+<li>그래서 논문은:
+<ul>
+<li>점수를 이진 레이블로 변환</li>
+<li>즉, “A가 B보다 낫다” 또는 “B가 A보다 낫다”</li>
+<li>이때 쓰이는 것이 <strong>Bradley–Terry 모델</strong></li>
+<li>모델이 예측한 두 영상에 대한 점수 Score_A, Score_B가 전문가 선호 확률과 일치하도록 학습</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</body>
+</html>
