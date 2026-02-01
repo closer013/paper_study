@@ -85,7 +85,9 @@ $$\left(F_{\text{id}} = \operatorname{Conv}\left( F'_{\text{in}}, \frac{s_{\text
 3) mask predictor로 생성된 spatial mask A
     + modulation이 얼굴(눈,코,입) 영역에만 적용되도록 함.
 
-$$\left(\(A = \phi(X).\)\right)$$
+$$\left(
+    \(A = \phi(X).\)
+\right)$$
 
 얼굴에 대한 세밀한 제어로 자연스러운 외형을 보존, 복잡한 배경이나 포즈 변화 발생 시 artifact를 최소화할 수 있다.
 
@@ -215,12 +217,12 @@ $$\left(
     <br>: 딥페이크·조작 영상 검출 목적
 
 + 결과
-    + ID 유사도 ↑
+    <br>
+    <img width="404" height="542" alt="Image" src="https://github.com/user-attachments/assets/10c944d2-effc-4966-849d-773a88e6d04c" />
     + 타 알고리즘 대비
+        + ID 유사도 ↑
         + pose 오차 ↓
         + 표정 오차 ↓
-<br>
-<img width="404" height="542" alt="Image" src="https://github.com/user-attachments/assets/10c944d2-effc-4966-849d-773a88e6d04c" />
     + warping / masking / refinement 유무에 따른 결과 비교
-<br>
-<img width="404" height="542" alt="Image" src="https://github.com/user-attachments/assets/10c944d2-effc-4966-849d-773a88e6d04c" />
+    <br>
+    <img width="404" height="542" alt="Image" src="https://github.com/user-attachments/assets/10c944d2-effc-4966-849d-773a88e6d04c" />
