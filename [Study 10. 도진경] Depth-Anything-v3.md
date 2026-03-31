@@ -47,6 +47,7 @@
 > 
 ### 3.1. Formulation
 > · 3D 공간상 점 $P$를 2D 공간상 점 $p$로 변환/복구 
+
 $$\left( P = R_i D_i (u,v) K^{-1}_i p + t_i\right)$$
 + 2D point $p = (u,v,1)^T$ 를 3D point $P=(X,Y,Z,1)^T$로 projection
     + $D_i(u,v)$: (u,v) 위치에서의 depth값
@@ -79,6 +80,7 @@ $$\left( P = R_i D_i (u,v) K^{-1}_i p + t_i\right)$$
 
 > · Deriving Camera Parameters from the Ray Map
 > : Ray map으로부터 카메라 param$(t,R,K)$를 도출한다.
+
 $$\left(
 t_c = \frac{1}{H \times W} \sum_{h=1}^{H} \sum_{w=1}^{W} \mathrm{M}(h, w, : 3)
 \right)$$
@@ -87,11 +89,8 @@ t_c = \frac{1}{H \times W} \sum_{h=1}^{H} \sum_{w=1}^{W} \mathrm{M}(h, w, : 3)
 $$\left(
 \mathbf{H}^* = \arg \min_{\|\mathbf{H}\|=1} \sum_{h=1}^{H} \sum_{w=1}^{W} \|\mathbf{H}\mathbf{p}_{h,w} \times \mathbf{M}(h, w, 3 : )\|.
 \right)$$
-+ $H$
-    <br>: 호모그래피를 사용해서 $R$,$K$를 추정
-    (R: 카메라 rotation, K: intrinsic param, H=RK)
-    <br>: world <-> camera coordinate 간 변환. 
-    <br>: 위 수식상 오차를 최소화하는 H 도출 (RQ Decomposition 사용)
++ $H$<br>: 호모그래피를 사용해서 $R$,$K$를 추정
+    (R: 카메라 rotation, K: intrinsic param, H=RK)<br>: world <-> camera coordinate 간 변환. <br>: 위 수식상 오차를 최소화하는 H 도출 (RQ Decomposition 사용)
     + $d_I = K_I^{-1} p = p$ : canonical space 에서 ray 방향
     + $d_{cam} = K R d_I$ : camera coordinate 상의 ray 방향
 
@@ -103,13 +102,15 @@ $$\left(
     + 트랜스포머는 camera token 기반 FOV(${f}$), 회전(${q}$), 이동(${t}$) 예측
 
 > 회전 행렬을 직접 구하지 말고 레이를 예측한다.
+
 <br>
 
 ### 3.2. Architecture
 + 효율성과 확장성을 극대화한 hybrid transformer 구조
 
 > · Single transformer backbone
-<br>
+
+
 + DINOv2와 같은 표준 ViT 하나만 사용
 + Token Rearranging
     + 력 토큰의 순서를 바꾸는 것만으로 여러 이미지를 동시에 처리
@@ -119,12 +120,12 @@ $$\left(
     + $Ls : Lg = 2 : 1$
 
 > · Camera condition injection
-<br>
+
 + 카메라 정보(포즈, 내적 파라미터)가 있을 때와 없을 때를 모두 처리 가능
     + 카메라 정보가 있는 경우, mlp $Ec$를 통해 camera token 생성 $ci = Ec(fi, qi, ti)$
 
 > · Dual-DPT head.  (Figure 3)
-<br>
+
 + Depth, Ray 생성
     + 백본에서 나온 feature를 Reassembly modules에서 처리, 마지막 단계에서만 Depth/Ray로 나뉜다.
     + 각 branch 는 동일한 feature 공유
@@ -132,13 +133,12 @@ $$\left(
 + 두 값이 동일 feature 기반으로 추정되어 높은 alignment, 낮은 연산량
 
 > - "하나의 똑똑한 뇌(Backbone)가 카메라 정보를 참고하여(Condition), 한 번에 깊이와 광선 지도를 그려내는(Dual-DPT)" 구조
-<br>
 > - $L_s:L_g$ 비율 조절을 통해 성능과 속도의 최적점을 찾았다
 
 
 ### 3.3 Training
 > · Teacher-student learning paradigm
-<br>
+
 + Real World 데이터는 Depth 값이 비거나 노이즈가 많아 모델 학습 어려움.
     + teacher-student를 사용해서 real data의 구조 유지, teacher 모델이 가진 detail 표현 능력 적용
 + Teacher 모델: Synthetic data로만 학습된 monocular depth estimation
@@ -146,7 +146,8 @@ $$\left(
 + RANSAC Least Squares: Teacher가 만든 depth 맵을 real 데이터(Sparse/Noisy GT)의 스케일에 맞춰 정렬, real 데이터의 구조적 정보를 유지한다.
 
 > · Training objectives
-<br>
+
+
 $$\left(
 \mathcal{L} = \mathcal{L}_D(\hat{D}, D) + \mathcal{L}_M(\hat{R}, M) + \mathcal{L}_P(\hat{D} \odot d + t, P) + \beta \mathcal{L}_C(\hat{c}, v) + \alpha \mathcal{L}_{\text{grad}}(\hat{D}, D)
 \right)$$
@@ -185,55 +186,88 @@ L_{\text{grad}}(\hat{D}, D) = ||\nabla_x \hat{D} - \nabla_x D||_1 + ||\nabla_y \
 
 ## 4. Teacher-Student Learning
 ### 4.1 Constructing the Teacher Model
-> Data scaling.
+> Data scaling
+
++ DA2 대비 학습 데이터셋 양 증가 - Hypersim, GTA-SfM 등 20개가 넘는 합성 데이터셋을 사용
+    + indoor/outdoor에서의 성능 향상
 > Depth representation
+
++ DA2: scale-shift-invariant disparity(시차)를 예측
++ teacher model: scale-shift-invariant depth 를 예측
+    + sfm, slam 등 depth를 추정하는 downstream task는 depth space에서 진행 <br> : disparity 예측 시 disparity->depth 변환 과정에서 오차 누적
+    + linear depth 대신 exponential depth 예측 <br> : near camera 에서의 차이 인식 성능 확보 목적
+
 > Training objectives
+
++ ROE alignment with the global–local loss 사용
+    + surface normal + gradient + alignment로 Depth의 geometry 학습
+
++ **distance-weighted surface-normal loss**
++ 중심 pixel에서 4개의 neighbor point 선택, unnormalized normal ${n_i}$ 계산 <br> : noise나 특정 방향으로의 bias를 줄이기 위해
+    + 다음 weight를 적용, 중심으로부터 멀수록 낮은 weight
+        + $n_i = (p_i - p_c) \times (p_{i+1} - p_c)$  <br> : 중심 픽셀과 이웃 point로 계산된 i번째 local surface normal <br> : 중심 픽셀과 이웃 두 점으로 만든 삼각형의 법선 벡터, 값이 클수록 중심에서 멀다.
+    
 $$\left(
 w_i = \sum_{j=0}^{4} \left\| n_j \right\| - \left\| n_i \right\|,
 \right)$$
++ 4개의 인접 pixel과의 관계에서 구한 $w_i, n_i$를 사용하여 평균 surface normal 계산
 $$\left(
 n_m = \sum_{i=0}^{4} w_i \frac{n_i}{\| n_i \|},
 \right)$$
 $$\left(
 \mathcal{L}_N = \mathcal{E}(\hat{n}_m, n_m) + \sum_{i=0}^1 \mathcal{E}(\hat{n}_i, n_i)
 \right)$$
++ Normal Loss
+    + $\mathcal{E}(\hat{n}_m, n_m)$: 평균 normal 비교, 전체 surface 방향
+    + $\mathcal{E}(\hat{n}_i, n_i)$: 개별 normal 비교, local detail
 $$\left(
 \mathcal{L}_T = \alpha \mathcal{L}_{\text{grad}} + \mathcal{L}_{\text{gl}} + \mathcal{L}_{N} + \mathcal{L}_{\text{sky}} + \mathcal{L}_{\text{obj}}
 \right)$$
++ 최종 loss
+    + $L_{grad} = \|\nabla D - \nabla D_{gt}\|$ <br>: depth의 edge/형태 유지
+    + $L_{gl}$: scale–shift invariant depth alignment (scale/shift 보정)
+    + $L_{N}$: surface normal
+    + $L_{sky}, L_{obj}$: mask loss, sky/object-only 데이터의 BG 에 대해서는 연산 진행 x
+- depth 와 normal 모두를 맞추면 기하학적 구조의 일관성이 높아짐 <br> : surface가 자연스럽게 이어지고, stitching/3D recon 작업에 유리
 
 ### 4.2 Teaching Depth Anything 3
-### 4.3 Teaching Monocular Model
-### 4.4 Teaching Metric Model
 
-+ 전통적인 VFS 평가 방법
-    + ID 유사도/검색, expression 정확도, FID
-    + temporal consistency, audio-lip 동기화에 제한적
-+ 세분화된 평가 metric 제안 - 눈/입 영역에 대한 추가 측정 방법
-    1) Eye
-        + Gaze Estimation
-        + Eye Eye Aspect Ratio ([EAR](https://vision.fe.uni-lj.si/cvww2016/proceedings/papers/05.pdf))
-    2) Lip Sync
-    <br>: talking head synthesis task에서 LSE-D/LSE-C 사용
-        + Lip Sync Error-Distance (LSE-D)
-        <br>: 입 랜드마크와 audio에 따른 입 위치값에서 벗어난 평균 편차
-        + Lip Sync Error-Confidence (LSE-C) 
-        <br>: Lip Sync 예측 confidence
+$$\left(
+(\hat{s}, \hat{t}) = \operatorname{arg\,min}_{s>0, t} \sum_{p \in \Omega} m_p (s \tilde{\mathbf{D}}_p + t - \mathbf{D}_p)^2
+\right)$$
++ scale/shift가 없는 depth($D$)를 → 실제 거리 스케일로 alignment
+    + $\tilde{\mathbf{D}}$: teacher depth, 상대적 depth
+    + $D$: noisy한 실제 depth - COLMAP,LiDAR 등에서 확보
+    + $m_p$ : validity mask, depth가 존재하는 pixel만 사용
+$$\left(
+\quad \mathbf{D}^{T \to M} = \hat{s} \tilde{\mathbf{D}} + \hat{t}
+\right)$$
++ monocular로 나온 상대적 거리를 실제 거리에 맞게 scaling/shift
+///
+- noisy한 실제 depth를 기준으로, teacher의 relative depth를 robust하게 scale–shift 정렬하여 metric depth supervision으로 사용
+    + scale consistency
+    + pose-depth 정렬
+    + noisy한 real world에서의 안정성
+
+### 4.3 Teaching Monocular Model
++ 라벨이 없는 이미지에 대해 student monocular model 학습
+    + 상대적인 depth 추론
+### 4.4 Teaching Metric Model
++ 절대 거리를 추론하는 student metric model 학습
+    + Depth는 focal length에 따라 정해진다 - 모든 depth를 동일한 카메라 기준으로 정규화
+    + $D' = f_c / f · D $
+        + $f_c$: 표준 focal length
+        + $f$: 실제 카메라의 focal length
+
 
 ## 5. Application: Feed-Forward 3D Gaussian Splattings
 ### 5.1 Pose-Conditioned Feed-Forward 3DGS
-### 5.2 Pose-Adaptive Feed-Forward 3DGS
-### 5.3 Implementation Details
-## 7. Experiments
-### 7.1 Comparison with State of the Art
-### 7.2 Analysis for Depth Anything 3
-#### 7.2.1 Sufficiency of the Depth-Ray Representation
-#### 7.2.2 Sufficiency of a Single Plain Transformer
-#### 7.2.3 Ablation and Analysis
-### 7.3 Analysis for Depth-Anything-3-Monocular
-#### 7.3.1 Teacher Model
-#### 7.3.2 Student Model
-### 7.4 Analysis for Depth-Anything-3-Metric
-### 7.5 Analysis for Feed-forward 3DGS
-> Visual quality analysis.
++ 카메라 포즈 정보가 주어졌을 때 3D 복원
+    + GS-DPT head 사용 <br> : single transformer backbone을 사용해서 camera 공간 내 3D Gaussian 파라미터 추정
 
-## 8. Conclusion and Discussion 
+### 5.2 Pose-Adaptive Feed-Forward 3DGS
++ 카메라 포즈 정보가 없을 때 3D 복원
+    + single transformer backbone을 사용, 상대적 Depth 예측
+    + GS-DPT head에서 Camera space 3D 생성 및 camera pose 예측
+    + World Space 변환
+    
