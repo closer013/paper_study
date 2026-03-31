@@ -5,10 +5,6 @@
 + [Reference] [paper](https://arxiv.org/abs/2511.10647) | [github](https://github.com/ByteDance-Seed/depth-anything-3) | [project page](https://depth-anything-3.github.io/)
 
 <br>
-<p align='center'>
-    <img width="381" height="297" alt="Image" src="https://github.com/user-attachments/assets/41744256-5648-4a2f-8f63-0b147fcf98ec" />
-</p>
-
 ## Abstract
 + single plain transform 를 backbone으로 사용 (vanilla DINO encoder)
 + teacher-student 학습 기반 DA2 수준의 detail 및 generalization 
@@ -243,11 +239,6 @@ $$\left(
 \quad \mathbf{D}^{T \to M} = \hat{s} \tilde{\mathbf{D}} + \hat{t}
 \right)$$
 + monocular로 나온 상대적 거리를 실제 거리에 맞게 scaling/shift
-///
-- noisy한 실제 depth를 기준으로, teacher의 relative depth를 robust하게 scale–shift 정렬하여 metric depth supervision으로 사용
-    + scale consistency
-    + pose-depth 정렬
-    + noisy한 real world에서의 안정성
 
 ### 4.3 Teaching Monocular Model
 + 라벨이 없는 이미지에 대해 student monocular model 학습
