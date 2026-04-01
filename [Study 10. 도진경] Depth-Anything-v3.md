@@ -71,7 +71,7 @@ $$\left( P = R_i D_i (u,v) K^{-1}_i p + t_i\right)$$
             + $R$ : world에서 카메라의 rotation 값
     + $M ∈ R^{H×W ×6}$
         + dense ray map, 모든 픽셀에 대한 파라미터 저장
-        + $M(:,:,:3)$ : 각 픽셀이 시작되는 ray의 원점(Origin) 정보
+        + $M(:,:,:3)$ : 각 픽셀이 시작되는 ray의 원점(Origin) 정보, 카메라 위치
         + $M(:,:,3:)$ : 각 픽셀에 저장된 ray 방향
 
 > · Deriving Camera Parameters from the Ray Map
@@ -85,31 +85,30 @@ t_c = \frac{1}{H \times W} \sum_{h=1}^{H} \sum_{w=1}^{W} \mathrm{M}(h, w, : 3)
 $$\left(
 \mathbf{H}^* = \arg \min_{\|\mathbf{H}\|=1} \sum_{h=1}^{H} \sum_{w=1}^{W} \|\mathbf{H}\mathbf{p}_{h,w} \times \mathbf{M}(h, w, 3 : )\|.
 \right)$$
-+ $H$<br>: 호모그래피를 사용해서 $R$,$K$를 추정
++ $\mathbf{H}$<br>: 호모그래피를 사용해서 $R$,$K$를 추정
     (R: 카메라 rotation, K: intrinsic param, H=RK)<br>: world <-> camera coordinate 간 변환. <br>: 위 수식상 오차를 최소화하는 H 도출 (RQ Decomposition 사용)
-    + $d_I = K_I^{-1} p = p$ : canonical space 에서 ray 방향
+    + $d_I = K_I^{-1} p = p$ : canonical space 에서 ray 방향 (표준 카메라 $K_I$ 를 가정하고, 표준 카메라 좌표계에서의 $d_I$ 계산)
     + $d_{cam} = K R d_I$ : camera coordinate 상의 ray 방향
 
 > · Minimal prediction targets.
 > : Depth와 Ray라는 최소한의 타겟만 사용, 빠르고 효율적인 연산
 + 타겟 최소화를 통한 Entanglement 방지
-+ lightweight Camera Head ($\mathcal{D}_C$) 사용
++ Transformer lightweight Camera Head ($\mathcal{D}_C$) 사용
     + ray map에서 camera pose 복구 시 연산을 줄이기 위해 사용
-    + 트랜스포머는 camera token 기반 FOV(${f}$), 회전(${q}$), 이동(${t}$) 예측
+    + camera token 기반 FOV(${f}$), 회전(${q}$), 이동(${t}$) 예측
 
 > 회전 행렬을 직접 구하지 말고 레이를 예측한다.
 
 <br>
 
 ### 3.2. Architecture
-+ 효율성과 확장성을 극대화한 hybrid transformer 구조
 
 > · Single transformer backbone
 
 
 + DINOv2와 같은 표준 ViT 하나만 사용
 + Token Rearranging
-    + 력 토큰의 순서를 바꾸는 것만으로 여러 이미지를 동시에 처리
+    + 토큰의 순서를 바꾸는 것만으로 여러 이미지를 동시에 처리
 + $L = Ls + Lg$   
     + $L_s$ : 각 이미지 내 self-attention, 한 이미지 특성 파악
     + $L_g$ : 모든 token에 대해 cross view / within-view attention 수행, 모든 이미지 간 관계 파악
@@ -119,6 +118,7 @@ $$\left(
 
 + 카메라 정보(포즈, 내적 파라미터)가 있을 때와 없을 때를 모두 처리 가능
     + 카메라 정보가 있는 경우, mlp $Ec$를 통해 camera token 생성 $ci = Ec(fi, qi, ti)$
+    + 각 이미지 앞에 카메라 토큰 정보를 주입
 
 > · Dual-DPT head.  (Figure 3)
 
@@ -188,8 +188,8 @@ L_{\text{grad}}(\hat{D}, D) = ||\nabla_x \hat{D} - \nabla_x D||_1 + ||\nabla_y \
     + indoor/outdoor에서의 성능 향상
 > Depth representation
 
-+ DA2: scale-shift-invariant disparity(시차)를 예측
-+ teacher model: scale-shift-invariant depth 를 예측
++ DA2는 scale-shift-invariant disparity(시차)를 예측
++ DA3의 teacher model: scale-shift-invariant depth 를 예측
     + sfm, slam 등 depth를 추정하는 downstream task는 depth space에서 진행 <br> : disparity 예측 시 disparity->depth 변환 과정에서 오차 누적
     + linear depth 대신 exponential depth 예측 <br> : near camera 에서의 차이 인식 성능 확보 목적
 
@@ -261,4 +261,16 @@ $$\left(
     + single transformer backbone을 사용, 상대적 Depth 예측
     + GS-DPT head에서 Camera space 3D 생성 및 camera pose 예측
     + World Space 변환
+
+## Conclusion
++ Single Transformer 기반 단순한 구조
+    + Depth와 Ray를 함께 학습
++ 3D 분야의 Foundation Model로 쓰일 수 있을 것이다.
++ 한계
+    + Dynamic Scene에서의 한계
+    + multimodal
     
+- 구조
+    + Backbone Training: depth, 3D, ray estimate
+    + Teacher Refinement: depth, geometry refine
+    + DA Align: metric alignment(real-world에 align)
