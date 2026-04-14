@@ -149,5 +149,5 @@ $$\left(
 + Table 2. GPU 가속 사용 가능, 비선형 warping 발생 시 traditional method의 속도 느려짐.
 ![alt text](image-1.png)
 + Ablation studies on our warp and composition 
-    + $\ell_{inter}$ (그리드 간 제약): 없으면 겹치지 않는 배경 영역의 구조 변형됨.
-    + $\ell_{intra}$ (그리드 내부 제약): 없으면 심한 왜곡(Projective Distortion) 발생.
+    + $$\ell_{inter}$$ (그리드 간 제약): 없으면 겹치지 않는 배경 영역의 구조 변형됨.
+    + $$\ell_{intra}$$ (그리드 내부 제약): 없으면 심한 왜곡(Projective Distortion) 발생.
